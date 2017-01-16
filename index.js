@@ -5,6 +5,7 @@ const Script = require('vm').Script;
 const repl = require('repl');
 const falafel = require('falafel');
 const promisify = require("es6-promisify");
+const jsfmt = require('jsfmt');
 // const BluebirdPromise = require('bluebird').Promise;
 
 // console.dir(Promise)
@@ -70,22 +71,74 @@ class Executor {
 
   execute(cmd) {
     cmd = `
-      var test = function() {
+      function t(params) {
+        console.log("---- hey")
+      }
+
+      function test(a) {
+        var c = t();
+        console.log("=== inside test " + c)
         return 'b';
       }
 
-      var a = db.documents.findOne(test())
+      var a = db.documents.findOne(test.bind({a:1})())
       console.log(a);
       console.log('hello', 'world');`;
 
+    // var ignoreMethods = ['apply', 'bind'];
+    // function skipMethod(source) {
+    //   for (var i = 0; i < ignoreMethods.length; i++) {
+    //     if (source.indexOf(ignoreMethods[i]) != -1) return false;
+    //   }
+    //
+    //   return true;
+    // }
+
+    // Instrument the code
     var output = falafel(cmd, function (node) {
+      // console.log("=============================== NODE")
+      // console.dir(node.type)
+      // console.dir(node.source())
+      // if(node.source().indexOf('.bind(') != -1 || node.source().indexOf('.apply(') != -1) {
+      //   console.dir(node)
+      // }
+
       if (node.type === 'CallExpression') {
-        node.update(`yield __shellWrapperMethod(${node.callee.source()}).apply(${node.callee.object ? node.callee.object.source() : node.callee.source()}, [${node.arguments.map(x => x.source())}])`);
+        // console.log("=============================== NODE CallExpression")
+        // console.dir(node.callee.source())
+        // console.dir(node)
+
+        // if(skipMethod(node.callee.source())) {
+          // console.log("=============================== NODE CallExpression MODIFY")
+          node.update(`yield __shellWrapperMethod(${node.callee.source()}).apply(${node.callee.object ? node.callee.object.source() : 'this'}, [${node.arguments.map(x => x.source())}])`);
+        // }
+      } else if (node.type === 'FunctionDeclaration') {
+        // console.log("=============================== NODE FunctionDeclaration")
+        // console.dir(node.body.body[0].source())
+        // console.dir(node)
+        // console.log(__shellWrapperMethod.toString())
+
+        // Wrap the content in a co routine
+        node.update(`
+          function ${node.id.name}(${node.params ? node.params.map(x => x.name) : ''}) {
+            return new Promise((__resolve, __reject) => {
+              co(function*() {
+                ${node.body.body.map(x => x.source()).join('\n')}
+                __resolve();
+              }).catch(__reject);
+            });
+          }
+        `.trim());
+      } else if (node.type === 'ReturnStatement') {
+        // console.log("=============================== NODE")
+        // console.dir(node)
+        node.update(`return __resolve(${node.argument.raw})`.trim());
       }
     });
 
-    // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! output")
+    // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! output 0")
     // console.log(output)
+    // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! output 1")
     const rewriteCmd = output;
 
     // Create db instance
@@ -97,28 +150,33 @@ class Executor {
     // Create the scriptString
     const scriptString = `
       co(function*() {
-        console.log("===================== 0")
         ${rewriteCmd}
-        console.log("===================== 1")
       }).catch(err => {
-        console.log("===================== ERR")
-        console.dir(err)
+        throw err;
       });
-    `;
+    `.trim();
+
+    const formattedScript = jsfmt.format(scriptString)
+
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! script")
+    console.log(formattedScript)
 
     // Create a script object
     const script = new Script(scriptString, {});
 
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! script")
-    console.log(scriptString)
+    // // Create the context
+    // const context = vm.createContext(Object.assign({}, this.context, {
+    //   db: db, __promisify: __promisify, __shellWrapperMethod: __shellWrapperMethod,
+    // }));
 
-    // Create the context
-    const context = vm.createContext(Object.assign({}, this.context, {
-      db: db, __promisify: __promisify, __shellWrapperMethod: __shellWrapperMethod
-    }));
+    global.db = db;
+    global.__promisify = __promisify;
+    global.__shellWrapperMethod = __shellWrapperMethod;
+    global.co = co;
 
     // Run a script in the global context of the shell
-    script.runInContext(context);
+    // script.runInContext(context);
+    script.runInThisContext();
   }
 }
 
