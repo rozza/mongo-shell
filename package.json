@@ -1,0 +1,32 @@
+{
+  "name": "mongo-shell",
+  "version": "1.0.0",
+  "description": "MongoDB Shell",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christkv/mongo-shell.git"
+  },
+  "keywords": [
+    "mongodb",
+    "shell"
+  ],
+  "author": "Christian Kvalheim",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/christkv/mongo-shell/issues"
+  },
+  "homepage": "https://github.com/christkv/mongo-shell#readme",
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "co": "^4.6.0",
+    "es6-promisify": "^5.0.0",
+    "falafel": "^2.0.0",
+    "has-ansi": "^2.0.0",
+    "mongodb": "^2.2.21",
+    "strip-ansi": "^3.0.1"
+  }
+}
