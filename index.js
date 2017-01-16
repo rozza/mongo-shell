@@ -71,13 +71,24 @@ class Executor {
 
   execute(cmd) {
     cmd = `
+      var b = function test2(param1){
+        console.log("=== b 0")
+        return "go"
+      }
+
       function t(params) {
-        console.log("---- hey")
+        console.log("=== t 0")
+        var c = b();
+        console.log("=== t 1")
+        return c;
       }
 
       function test(a) {
+        console.log("=== test 0")
         var c = t();
+        console.log("=== test 1")
         console.log("=== inside test " + c)
+        console.log("=== test 2")
         return 'b';
       }
 
@@ -112,7 +123,7 @@ class Executor {
           // console.log("=============================== NODE CallExpression MODIFY")
           node.update(`yield __shellWrapperMethod(${node.callee.source()}).apply(${node.callee.object ? node.callee.object.source() : 'this'}, [${node.arguments.map(x => x.source())}])`);
         // }
-      } else if (node.type === 'FunctionDeclaration') {
+      } else if (node.type === 'FunctionDeclaration' || node.type === 'FunctionExpression') {
         // console.log("=============================== NODE FunctionDeclaration")
         // console.dir(node.body.body[0].source())
         // console.dir(node)
@@ -132,7 +143,7 @@ class Executor {
       } else if (node.type === 'ReturnStatement') {
         // console.log("=============================== NODE")
         // console.dir(node)
-        node.update(`return __resolve(${node.argument.raw})`.trim());
+        node.update(`return __resolve(${node.argument.raw ? node.argument.raw : node.argument.name})`.trim());
       }
     });
 
