@@ -23,11 +23,10 @@
   "dependencies": {
     "bluebird": "^3.4.7",
     "co": "^4.6.0",
-    "es6-promisify": "^5.0.0",
     "falafel": "^2.0.0",
-    "has-ansi": "^2.0.0",
     "jsfmt": "^0.5.3",
-    "mongodb": "^2.2.21",
-    "strip-ansi": "^3.0.1"
+    "mongodb": "^2.2.21"
+  },
+  "devDependencies": {
   }
 }
