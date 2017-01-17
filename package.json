@@ -27,6 +27,5 @@
     "jsfmt": "^0.5.3",
     "mongodb": "^2.2.21"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
