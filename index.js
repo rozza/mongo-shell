@@ -7,10 +7,14 @@ const cliff = require('cliff');
 const readline = require('readline');
 const Executor = require('./lib/executor');
 const {
-  MongoClient
+  MongoClient, ObjectId
 } = require('mongodb');
 const Db = require('./lib/db');
 const Collection = require('./lib/collection');
+
+ObjectId.prototype.toJSON = function() {
+  return `ObjectId("${this.toHexString()}")`
+}
 
 // Default uri connection string
 const uri = 'mongodb://localhost:27017/test';
@@ -104,13 +108,35 @@ co(function*() {
     return Number(bytes/1024/1024/1024).toFixed(precision);
   }
 
+  function fixBSONTypeOutput(string, regexp) {
+    var match = string.match(regexp);
+    // console.log("================= fixBSONTypeOutput")
+    // console.log(string)
+    // console.log(match)
+    if(!match) return string;
+    string = string.replace(
+      match[0],
+      match[0].substr(1, match[0].length - 2).replace(/\\\"/g, "\"")
+    );
+
+    return fixBSONTypeOutput(string, regexp);
+  }
+
   // Set up the repl
   const replServer = repl.start({
     prompt: prompt, ignoreUndefined: true,
     writer: function(line) {
-      if(typeof line == 'string') return line;
       if(Array.isArray(line)) return JSON.stringify(line, null, 0);
-      if(line != null && typeof line == 'object') return JSON.stringify(line, null, 2);
+      if(line != null && typeof line == 'object') {
+        line = JSON.stringify(line, null, 2);
+      }
+
+      // Do some post processing for specal BSON values
+      line = fixBSONTypeOutput(line, /\"ObjectId\(\\\"[0-9|a-f|A-F]*\\\"\)\"/);
+
+      // line.replace(/\"ObjectId\([0-9|a-f|A-F]*)/)
+
+      // Return formated string
       return line;
     },
     eval: function(cmd, context, filename, callback) {
@@ -152,9 +178,6 @@ co(function*() {
         // Processed command execution
         const finalCommand = cmds.join(';');
 
-        // console.log('=========================== execute command')
-        // console.log(finalCommand)
-
         // Execute all commands
         executor.execute(finalCommand, shellContext);
 
@@ -163,12 +186,7 @@ co(function*() {
           yield sleep(10);
         }
 
-        // console.log("========================== cmd")
-        // console.log(shellContext.__executing)
-        // console.log(shellContext.__result)
-        // console.dir(shellContext)
-        // executor.execute(cmd, shellContext)
-
+        // Callback with the result
         callback(null, shellContext.__result);
       }).catch(err => {
         callback(err);
