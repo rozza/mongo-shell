@@ -22,6 +22,7 @@
   "homepage": "https://github.com/christkv/mongo-shell#readme",
   "dependencies": {
     "bluebird": "^3.4.7",
+    "cliff": "^0.1.10",
     "co": "^4.6.0",
     "falafel": "^2.0.0",
     "jsfmt": "^0.5.3",
