@@ -136,6 +136,8 @@ co(function*() {
 
           return callback(null, cliff.stringifyRows(databases, ['green', 'green', 'green']));
         } else if (cmd === 'show collections') {
+          let collectionNames = yield shellContext.db.getCollectionNames();
+          return callback(null, collectionNames.join('\n'));
         }
 
         // Process the cmd (if using ; to do multi statement lines, execute them one by one
