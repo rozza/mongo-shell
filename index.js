@@ -74,7 +74,9 @@ co(function*() {
       // Read the file
       const file = fs.readFileSync(files[i], 'utf8');
       // Let's execute the file
-      yield executor.executeSync(file, context);
+      yield executor.executeSync(file, context, {
+        detectCallbacks: true,
+      });
     }
 
     // Shutdown mongodb connection
