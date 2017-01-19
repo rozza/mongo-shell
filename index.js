@@ -43,10 +43,6 @@ const files = program.rawArgs.filter(x => {
   return x.indexOf('.js') != -1 && x !== __filename;
 })
 
-ObjectId.prototype.toJSON = function() {
-  return `ObjectId("${this.toHexString()}")`
-}
-
 // Default uri connection string
 const uri = 'mongodb://localhost:27017/test';
 // Default Executor used for the shell
