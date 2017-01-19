@@ -3,6 +3,7 @@
 const co = require('co');
 const repl = require('repl');
 const vm = require('vm');
+const fs = require('fs');
 const cliff = require('cliff');
 const readline = require('readline');
 const program = require('commander');
@@ -49,7 +50,6 @@ ObjectId.prototype.toJSON = function() {
 // Default uri connection string
 const uri = 'mongodb://localhost:27017/test';
 // Default Executor used for the shell
-const executor = new Executor();
 // Contains the current prompt
 let prompt = 'mongodb> ';
 
@@ -62,6 +62,25 @@ co(function*() {
   var context = vm.createContext(initContext);
   // Default db
   context.db = Db.proxy(client.s.databaseName, client);
+  // Add global special methods
+  context.require = require
+
+  // Do we have files to execute
+  if (files.length > 0) {
+    // Execute each file
+    const executor = new Executor();
+
+    for(var i = 0; i < files.length; i++) {
+      // Read the file
+      const file = fs.readFileSync(files[i], 'utf8');
+      // Let's execute the file
+      yield executor.executeSync(file, context);
+    }
+
+    // Cut short as we are done;
+    return;
+  }
+
   // Create a repl
   const replServer = new REPL(client, context);
   // Start the repl
