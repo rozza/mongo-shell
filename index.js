@@ -77,6 +77,8 @@ co(function*() {
       yield executor.executeSync(file, context);
     }
 
+    // Shutdown mongodb connection
+    client.close();
     // Cut short as we are done;
     return;
   }
