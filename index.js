@@ -57,7 +57,7 @@ co(function*() {
   // Create a context for execution
   var context = vm.createContext(initContext);
   // Default db
-  context.db = Db.proxy(client.s.databaseName, client);
+  context.db = Db.proxy(client.s.databaseName, client, context);
   // Add global special methods
   context.require = require
 
