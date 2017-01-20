@@ -2,6 +2,7 @@ const co = require('co'),
   vm = require('vm'),
   MongoClient = require('mongodb').MongoClient,
   REPL = require('../lib/repl'),
+  EventEmitter = require('events').EventEmitter,
   Db = require('../lib/db'),
   assert = require('assert');
 
@@ -9,6 +10,7 @@ let client = null;
 
 before((done) => {
   co(function*() {
+    EventEmitter.defaultMaxListeners = 100000;
     // Connect to mongodb
     client = yield MongoClient.connect('mongodb://localhost:27017/test_runner');
     // Drop the database
