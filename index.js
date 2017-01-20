@@ -86,6 +86,6 @@ co(function*() {
   // Start the repl
   replServer.start();
 }).catch(err => {
-  // console.log(err);
+  console.log(err);
   process.exit(0);
 });

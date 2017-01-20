@@ -28,8 +28,8 @@
     "falafel": "^2.0.0",
     "mongodb": "^2.2.21"
   },
-  "devDependencies": {
-    "nexe": "^1.1.2",
-    "jsfmt": "^0.5.3"
+  "devDependencies": {},
+  "bin": {
+    "mongo-shell": "bin/mongo-shell.js"
   }
 }
