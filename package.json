@@ -4,7 +4,8 @@
   "description": "MongoDB Shell",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --recursive ./test/*",
+    "build": "node ./build.js"
   },
   "repository": {
     "type": "git",
@@ -21,13 +22,14 @@
   },
   "homepage": "https://github.com/christkv/mongo-shell#readme",
   "dependencies": {
-    "bluebird": "^3.4.7",
     "cliff": "^0.1.10",
     "co": "^4.6.0",
     "commander": "^2.9.0",
     "falafel": "^2.0.0",
-    "jsfmt": "^0.5.3",
     "mongodb": "^2.2.21"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "nexe": "^1.1.2",
+    "jsfmt": "^0.5.3"
+  }
 }

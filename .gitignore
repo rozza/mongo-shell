@@ -12,6 +12,8 @@ pids
 lib-cov
 tmp/
 shell
+db
+.build/
 
 # Coverage directory used by tools like istanbul
 coverage
