@@ -43,11 +43,26 @@ const files = program.rawArgs.filter(x => {
   return x.indexOf('.js') != -1 && x !== __filename;
 })
 
+
 // Default uri connection string
-const uri = 'mongodb://localhost:27017/test';
+let uri = 'mongodb://localhost:27017/test';
 // Default Executor used for the shell
 // Contains the current prompt
 let prompt = 'mongodb> ';
+
+// Get the connection string if any specified
+for(let i = 0; i < program.rawArgs.length; i++) {
+  if(program.rawArgs[i] == __filename) {
+    let arg = program.rawArgs[i+1].trim();
+    console.dir(arg)
+    // Test if this is a valid uri string
+    if(typeof arg === 'string'
+      && arg.indexOf('.js') == -1
+      && arg.indexOf('mongodb://') == -1) {
+        uri = `mongodb://${arg}`;
+    }
+  }
+}
 
 co(function*() {
   // Connect to mongodb
