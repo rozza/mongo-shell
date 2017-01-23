@@ -2,8 +2,8 @@ const co = require('co'),
   vm = require('vm'),
   MongoClient = require('mongodb').MongoClient,
   REPL = require('../lib/repl'),
-  Db = require('../lib/db'),
   EventEmitter = require('events').EventEmitter,
+  Db = require('../lib/db'),
   assert = require('assert');
 
 let client = null;
@@ -27,9 +27,9 @@ after(function() {
 });
 
 
-describe('Repl Error tests', () => {
-  describe('parser error handling', () => {
-    it('should correctly return sensible error on only providing db and collection', (done) => {
+describe('Repl JS Expressions tests', () => {
+  describe('value setting', () => {
+    it('should correctly handle a global value expression expression [var a = 1]', (done) => {
       co(function*() {
         // Init context
         const initContext = Object.assign({}, global, {});
@@ -45,10 +45,17 @@ describe('Repl Error tests', () => {
         // Start the repl
         const _repl = repl.start();
         // Execute command
-        _repl.eval('db.tests2', context, '', function(err, result) {
+        _repl.eval('var a = 1', context, '', function(err, result) {
           assert.equal(null, err);
-          assert.equal('test_runner.tests2', result);
+          assert.equal(1, result);
 
+          // Render the repl final text
+          let string = _repl.writer(result);
+          string = string.replace(/\n|\\n/g, '');
+
+          assert.equal(
+            `1`.trim(),
+            string.trim());
           done();
         });
       }).catch(function(err) {
@@ -56,37 +63,7 @@ describe('Repl Error tests', () => {
       });
     });
 
-    it('should correctly return sensible error on providing db and collection and legal function', (done) => {
-      co(function*() {
-        // Init context
-        const initContext = Object.assign({}, global, {});
-        // Create a context for execution
-        var context = vm.createContext(initContext);
-        const db = Db.proxy(client.s.databaseName, client, context);
-
-        context = Object.assign(context, {
-          db: db,
-          require: require,
-        })
-
-        // Create a repl instance
-        const repl = new REPL(client, context, {});
-        // Start the repl
-        const _repl = repl.start();
-
-        // Execute command
-        _repl.eval('db.tests2.find', context, '', function(err, result) {
-          assert.equal(null, err);
-          assert.equal('test_runner.tests2.find', result);
-
-          done();
-        });
-      }).catch(function(err) {
-        console.log(err);
-      });
-    });
-
-    it('should correctly return nothing for undefined variable', (done) => {
+    it('should correctly handle a global value expression expression [a = 1 + 1]', (done) => {
       co(function*() {
         // Init context
         const initContext = Object.assign({}, global, {});
@@ -102,10 +79,17 @@ describe('Repl Error tests', () => {
         // Start the repl
         const _repl = repl.start();
         // Execute command
-        _repl.eval('db.tests2.__', context, '', function(err, result) {
+        _repl.eval('a = 1 + 1', context, '', function(err, result) {
           assert.equal(null, err);
-          assert.equal('', result);
+          assert.equal(2, result);
 
+          // Render the repl final text
+          let string = _repl.writer(result);
+          string = string.replace(/\n|\\n/g, '');
+
+          assert.equal(
+            `2`.trim(),
+            string.trim());
           done();
         });
       }).catch(function(err) {
