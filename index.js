@@ -54,7 +54,7 @@ let prompt = 'mongodb> ';
 for(let i = 0; i < program.rawArgs.length; i++) {
   if(program.rawArgs[i] == __filename) {
     let arg = program.rawArgs[i+1].trim();
-    console.dir(arg)
+    // console.dir(arg)
     // Test if this is a valid uri string
     if(typeof arg === 'string'
       && arg.indexOf('.js') == -1
