@@ -11,6 +11,9 @@ const namespaces = {
     `${__dirname}/lib/db_mixins/collection.js`,
     `${__dirname}/lib/db_mixins/operations.js`,
   ],
+  collection: [
+    `${__dirname}/lib/collection.js`,
+  ],
 }
 
 // Create docs directory
@@ -23,7 +26,7 @@ const indexes = {};
 for (let namespace in namespaces) {
   for (var i = 0; i < namespaces[namespace].length; i++) {
     const code = fs.readFileSync(namespaces[namespace][i], 'utf8');
-    const obj = dox.parseComments(code);
+    const obj = dox.parseComments(code, {raw: true});
 
     // Iterate over all the object
     obj.forEach(element => {

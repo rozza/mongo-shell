@@ -14,6 +14,7 @@ const {
 } = require('mongodb');
 const Db = require('./lib/db');
 const Collection = require('./lib/collection');
+const HelpDocs = require('./lib/help_docs');
 
 program
   .version('0.0.1')
@@ -53,6 +54,7 @@ let prompt = 'mongodb> ';
 // Get the connection string if any specified
 for(let i = 0; i < program.rawArgs.length; i++) {
   if(program.rawArgs[i] == __filename) {
+    if (!program.rawArgs[i+1]) break;
     let arg = program.rawArgs[i+1].trim();
     // console.dir(arg)
     // Test if this is a valid uri string
