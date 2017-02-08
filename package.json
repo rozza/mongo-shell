@@ -26,7 +26,8 @@
     "co": "^4.6.0",
     "commander": "^2.9.0",
     "falafel": "^2.0.0",
-    "mongodb": "^2.2.21"
+    "mongodb": "^2.2.21",
+    "baas": "10gen/baas-node-js#master"
   },
   "devDependencies": {
     "dox": "^0.9.0",
