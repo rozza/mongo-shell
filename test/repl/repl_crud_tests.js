@@ -1,9 +1,9 @@
 const co = require('co'),
   vm = require('vm'),
   MongoClient = require('mongodb').MongoClient,
-  REPL = require('../lib/repl'),
+  REPL = require('../../lib/repl'),
   EventEmitter = require('events').EventEmitter,
-  Db = require('../lib/db'),
+  Db = require('../../lib/db'),
   assert = require('assert');
 
 let client = null;
@@ -41,6 +41,7 @@ describe('Repl CRUD tests', () => {
 
         // Create a repl instance
         const repl = new REPL(client, context, {
+          prompt: '',
         });
         // Start the repl
         const _repl = repl.start();
@@ -75,6 +76,7 @@ describe('Repl CRUD tests', () => {
 
         // Create a repl instance
         const repl = new REPL(client, context, {
+          prompt: '',
         });
         // Start the repl
         const _repl = repl.start();
@@ -110,7 +112,7 @@ describe('Repl CRUD tests', () => {
 
         // Create a repl instance
         const repl = new REPL(client, context, {
-          renderView: 'repl'
+          renderView: 'repl', prompt: '',
         });
         // Start the repl
         const _repl = repl.start();
@@ -145,7 +147,7 @@ describe('Repl CRUD tests', () => {
 
         // Create a repl instance
         const repl = new REPL(client, context, {
-          renderView: 'repl'
+          renderView: 'repl', prompt: '',
         });
         // Start the repl
         const _repl = repl.start();
@@ -184,7 +186,7 @@ describe('Repl CRUD tests', () => {
 
         // Create a repl instance
         const repl = new REPL(client, context, {
-          renderView: 'repl'
+          renderView: 'repl', prompt: '',
         });
         // Start the repl
         const _repl = repl.start();
@@ -220,7 +222,7 @@ describe('Repl CRUD tests', () => {
 
         // Create a repl instance
         const repl = new REPL(client, context, {
-          renderView: 'repl'
+          renderView: 'repl', prompt: '',
         });
         // Start the repl
         const _repl = repl.start();
@@ -261,7 +263,7 @@ describe('Repl CRUD tests', () => {
 
         // Create a repl instance
         const repl = new REPL(client, context, {
-          renderView: 'repl'
+          renderView: 'repl', prompt: '',
         });
 
         // Insert a test doc
@@ -300,7 +302,7 @@ describe('Repl CRUD tests', () => {
 
         // Create a repl instance
         const repl = new REPL(client, context, {
-          renderView: 'repl'
+          renderView: 'repl', prompt: '',
         });
 
         // Insert a test doc

@@ -1,8 +1,8 @@
 const co = require('co'),
   vm = require('vm'),
   MongoClient = require('mongodb').MongoClient,
-  REPL = require('../lib/repl'),
-  Db = require('../lib/db'),
+  REPL = require('../../lib/repl'),
+  Db = require('../../lib/db'),
   EventEmitter = require('events').EventEmitter,
   assert = require('assert');
 
@@ -41,6 +41,7 @@ describe('Repl Error tests', () => {
 
         // Create a repl instance
         const repl = new REPL(client, context, {
+          prompt: '',
         });
         // Start the repl
         const _repl = repl.start();
@@ -70,7 +71,9 @@ describe('Repl Error tests', () => {
         })
 
         // Create a repl instance
-        const repl = new REPL(client, context, {});
+        const repl = new REPL(client, context, {
+          prompt: '',
+        });
         // Start the repl
         const _repl = repl.start();
 
@@ -98,6 +101,7 @@ describe('Repl Error tests', () => {
 
         // Create a repl instance
         const repl = new REPL(client, context, {
+          prompt: '',
         });
         // Start the repl
         const _repl = repl.start();

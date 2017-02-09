@@ -1,9 +1,9 @@
 const co = require('co'),
   vm = require('vm'),
   MongoClient = require('mongodb').MongoClient,
-  REPL = require('../lib/repl'),
+  REPL = require('../../lib/repl'),
   EventEmitter = require('events').EventEmitter,
-  Db = require('../lib/db'),
+  Db = require('../../lib/db'),
   assert = require('assert');
 
 let client = null;
@@ -27,9 +27,9 @@ after(function() {
 });
 
 
-describe('Repl Helper tests', () => {
-  describe('Admin helpers', () => {
-    it('should correctly call currentOp method', (done) => {
+describe('Repl JS Expressions tests', () => {
+  describe('value setting', () => {
+    it('should correctly handle a global value expression expression [var a = 1]', (done) => {
       co(function*() {
         // Init context
         const initContext = Object.assign({}, global, {});
@@ -40,11 +40,23 @@ describe('Repl Helper tests', () => {
         });
 
         // Create a repl instance
-        const _repl = new REPL(client, context, {}).start();
+        const repl = new REPL(client, context, {
+          prompt: '',
+        });
+        // Start the repl
+        const _repl = repl.start();
         // Execute command
-        _repl.eval('db.currentOp()', context, '', function(err, result) {
+        _repl.eval('var a = 1', context, '', function(err, result) {
           assert.equal(null, err);
-          assert.ok(result.inprog);
+          assert.equal(1, result);
+
+          // Render the repl final text
+          let string = _repl.writer(result);
+          string = string.replace(/\n|\\n/g, '');
+
+          assert.equal(
+            `1`.trim(),
+            string.trim());
           done();
         });
       }).catch(function(err) {
@@ -52,7 +64,7 @@ describe('Repl Helper tests', () => {
       });
     });
 
-    it('should correctly call dbEval method', (done) => {
+    it('should correctly handle a global value expression expression [a = 1 + 1]', (done) => {
       co(function*() {
         // Init context
         const initContext = Object.assign({}, global, {});
@@ -63,14 +75,23 @@ describe('Repl Helper tests', () => {
         });
 
         // Create a repl instance
-        const _repl = new REPL(client, context, {}).start();
+        const repl = new REPL(client, context, {
+          prompt: '',
+        });
+        // Start the repl
+        const _repl = repl.start();
         // Execute command
-        _repl.eval('db.dbEval("return 1")', context, '', function(err, result) {
-          // console.log("==============================================")
-          // console.dir(err)
-          // console.dir(result)
+        _repl.eval('a = 1 + 1', context, '', function(err, result) {
           assert.equal(null, err);
-          assert.equal(1, result);
+          assert.equal(2, result);
+
+          // Render the repl final text
+          let string = _repl.writer(result);
+          string = string.replace(/\n|\\n/g, '');
+
+          assert.equal(
+            `2`.trim(),
+            string.trim());
           done();
         });
       }).catch(function(err) {

@@ -1,0 +1,6 @@
+Possible features
+=================
+* Do not connect automatically if no url provided
+* Provide plugins with ability to load/store state so you can do something like
+  - atlas.connect() which will use last stored credentials etc.
+  

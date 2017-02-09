@@ -15,6 +15,7 @@ const {
 const Db = require('./lib/db');
 const Collection = require('./lib/collection');
 const HelpDocs = require('./lib/help_docs');
+const plugins = require('./lib/plugins');
 
 program
   .version('0.0.1')
@@ -69,8 +70,22 @@ for(let i = 0; i < program.rawArgs.length; i++) {
 co(function*() {
   // Connect to mongodb
   const client = yield MongoClient.connect(uri);
+
+  // Attempt to instantiate all the plugins
+  const pluginInstances = [];
+  // Go over all the plugins
+  for (var name in plugins) {
+    pluginInstances.push(new plugins[name](client))
+  }
+
   // Init context
   const initContext = Object.assign({}, global, {});
+
+  // Let plugin's decorate the context
+  for (let i = 0; i < pluginInstances.length; i++) {
+    yield pluginInstances[i].decorateContext(initContext);
+  }
+
   // Create a context for execution
   var context = vm.createContext(initContext);
   // Default db
@@ -99,10 +114,12 @@ co(function*() {
   }
 
   // Create a repl
-  const replServer = new REPL(client, context);
+  const replServer = new REPL(client, context, {
+    plugins: pluginInstances,
+  });
   // Start the repl
   replServer.start();
 }).catch(err => {
-  console.log(err);
+  // console.log(err);
   process.exit(0);
 });
