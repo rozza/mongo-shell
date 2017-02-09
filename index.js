@@ -14,7 +14,6 @@ const {
 } = require('mongodb');
 const Db = require('./lib/db');
 const Collection = require('./lib/collection');
-const HelpDocs = require('./lib/help_docs');
 const plugins = require('./lib/plugins');
 
 program
