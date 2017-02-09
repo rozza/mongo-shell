@@ -22,13 +22,14 @@
   },
   "homepage": "https://github.com/christkv/mongo-shell#readme",
   "dependencies": {
+    "baas": "10gen/baas-node-js#master",
     "chalk": "^1.1.3",
     "cliff": "^0.1.10",
     "co": "^4.6.0",
     "commander": "^2.9.0",
     "falafel": "^2.0.0",
-    "mongodb": "^2.2.21",
-    "baas": "10gen/baas-node-js#master"
+    "has-ansi": "^2.0.0",
+    "mongodb": "^2.2.21"
   },
   "devDependencies": {
     "dox": "^0.9.0",

@@ -11,6 +11,9 @@ const namespaces = {
     `${__dirname}/lib/db_mixins/collection.js`,
     `${__dirname}/lib/db_mixins/operations.js`,
   ],
+  collection: [
+    `${__dirname}/lib/collection.js`,
+  ],
 }
 
 // Create docs directory
