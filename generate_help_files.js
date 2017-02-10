@@ -4,14 +4,14 @@ const mkdirp = require('mkdirp')
 
 // name space configurations
 const namespaces = {
-  db: [
+  'db': [
     `${__dirname}/lib/db.js`,
     `${__dirname}/lib/db_mixins/admin.js`,
     `${__dirname}/lib/db_mixins/auth.js`,
     `${__dirname}/lib/db_mixins/collection.js`,
     `${__dirname}/lib/db_mixins/operations.js`,
   ],
-  collection: [
+  'db.collection': [
     `${__dirname}/lib/collection.js`,
   ],
 }
